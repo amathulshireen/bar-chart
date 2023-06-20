@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stylish Bar Chart</title>
+ <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    /* Chart container */
+    
+    .chart-container {
+        margin: 150px;
+        height: fit-content;
+        width: fit-content;
+        margin-bottom: auto;
+      background-color: #66d1fc;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(13, 230, 238, 0.1);
+      font-family: Arial, sans-serif;
+   
+    }
+
+    /* Chart title */
+    .chart-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Bars */
+    .bar {
+      fill: #e4f041;
+      transition: fill 0.3s ease;
+    }
+
+    .bar:hover {
+      fill: #e436a1;
+    }
+
+    /* Axis */
+    .axis text {
+      font-size: 12px;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #7d2780;
+      stroke-width: 1px;
+      shape-rendering: crispEdges;
+    }
+  </style>
+</head>
+<body>
+  <div class="chart-container">
+    <h2 class="chart-title"> Bar Chart</h2>
+    <svg id="chart"></svg>
+  </div>
+
+  <script>
+    // Sample data
+    const data = [
+      { label: "Category 1", value: 20 },
+      { label: "Category 2", value: 35 },
+      { label: "Category 3", value: 15 },
+      { label: "Category 4", value: 50 },
+      { label: "Category 5", value: 45 }
+    ];
+
+    // Chart dimensions
+    const width = 400;
+    const height = 300;
+
+    // Create the SVG element
+    const svg = d3.select("#chart")
+                  .attr("width", width)
+                  .attr("height", height);
+
+    // Create the scales
+    const xScale = d3.scaleBand()
+                     .domain(data.map(d => d.label))
+                     .range([0, width])
+                     .padding(0.1);
+
+    const yScale = d3.scaleLinear()
+                     .domain([0, d3.max(data, d => d.value)])
+                     .range([height, 0]);
+
+    // Create the bars
+    svg.selectAll("rect")
+       .data(data)
+       .enter()
+       .append("rect")
+       .attr("class", "bar")
+       .attr("x", d => xScale(d.label))
+       .attr("y", d => yScale(d.value))
+       .attr("width", xScale.bandwidth())
+       .attr("height", d => height - yScale(d.value));
+
+    // Create the x-axis
+    const xAxis = d3.axisBottom(xScale);
+    svg.append("g")
+       .attr("transform", `translate(0, ${height})`)
+       .call(xAxis)
+       .selectAll("text")
+       .attr("transform", "rotate(-45)")
+       .style("text-anchor", "end");
+
+    // Create the y-axis
+    const yAxis = d3.axisLeft(yScale);
+    svg.append("g")
+       .call(yAxis);
+  </script>
+</body>
+</html>
